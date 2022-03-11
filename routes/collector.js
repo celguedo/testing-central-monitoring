@@ -4,14 +4,6 @@ var router = express.Router();
 
 /* GET */
 router.get("/mongodb", function (req, res, next) {
-  console.log("req.query", req.query);
-  console.log("req.url", req.url);
-
-//identifica la data a buscar
-//se consulta a la base de datos
-//se formatea
-//se envia
-
   res.send(
     JSON.stringify({
       message: "Llego a buscar datos",
@@ -27,8 +19,6 @@ router.get("/mongodb", function (req, res, next) {
 
 /* GET */
 router.get("/site247", function (req, res, next) {
-  
-
   res.send(
     JSON.stringify({
       message: "Llego a buscar datos de site 247",
@@ -43,31 +33,27 @@ router.get("/site247", function (req, res, next) {
 
 /* POST */
 router.post("/mongodb", function (req, res, next) {
-  
+  console.log('MONGOATLAS: Llego:', req.body)
   res.send("Llego al endpoint recolector FROM source");
 });
 
 /* POST */
 router.post("/site247", function (req, res, next) {
-  
+  console.log('SITE247: Llego:', req.body)
   res.send("Llego al endpoint recolector FROM source");
 });
 
 /* POST */
 router.post("/aws", function (req, res, next) {
   let body = ''
-
   req.on('data', (chunk) => {
     body += chunk.toString()
   })
-
   req.on('end', () => {
     let payload = JSON.parse(body)
-
     if (payload.Type === 'SubscriptionConfirmation') {
       const promise = new Promise((resolve, reject) => {
         const url = payload.SubscribeURL
-
         axios.post(url, {})
         .then(function (response) {
           console.log('AWS MANDA:', response);
@@ -87,8 +73,7 @@ router.post("/aws", function (req, res, next) {
       })
     }else{
       const promise = new Promise((resolve, reject) => {
-        const Subject = payload;
-        console.log("🚀 ~ file: collector.js ~ line 91 ~ promise ~ Subject", Subject)
+        console.log("AWS Llego:", Subject)
       })
 
       promise.then(() => {
