@@ -84,4 +84,16 @@ router.post("/aws", function (req, res, next) {
   res.send('fin')
 });
 
+/* POST */
+router.post("/metrics", function (req, res, next) {
+  console.log('SITE247: Llego:', req)
+  res.send("Llego al endpoint recolector FROM source");
+});
+
+/* POST */
+router.post("/apm", function (req, res, next) {
+  console.log('Elastic APM: Llego:', req)
+  res.send("Llego al endpoint recolector FROM source");
+});
+
 module.exports = router;
