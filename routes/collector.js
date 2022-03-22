@@ -1,6 +1,8 @@
 var express = require("express");
 var axios = require("axios")
 var router = express.Router();
+const { v4: uuidv4 } = require('uuid');
+const dynamoHelp = require('../repository/aws/saveData');
 
 /* GET */
 router.get("/mongodb", function (req, res, next) {
@@ -32,8 +34,15 @@ router.get("/site247", function (req, res, next) {
 });
 
 /* POST */
-router.post("/mongodb", function (req, res, next) {
-  console.log('MONGOATLAS: Llego:', req.body)
+router.post("/mongodb", async function (req, res, next) {
+  const data = req.body;
+  const resultado = await dynamoHelp.save({
+    id:uuidv4(),
+    alert: data.metricName,
+    info: data
+  })
+
+  console.log('RESULTADO DE GUARDAR EN DB, MONGOATLAS:', resultado)
   res.send("Llego al endpoint recolector FROM source");
 });
 
@@ -86,13 +95,13 @@ router.post("/aws", function (req, res, next) {
 
 /* POST */
 router.post("/metrics", function (req, res, next) {
-  console.log('SITE247: Llego:', req)
+  console.log('METRICS: Llego:', req.body)
   res.send("Llego al endpoint recolector FROM source");
 });
 
 /* POST */
 router.post("/apm", function (req, res, next) {
-  console.log('Elastic APM: Llego:', req)
+  console.log('Elastic APM: Llego:', typeof(req.body))
   res.send("Llego al endpoint recolector FROM source");
 });
 

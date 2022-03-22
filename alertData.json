@@ -1,0 +1,28 @@
+[
+   {
+     "id": "1",
+     "alert": "scraping",
+     "info": {
+       "replicaSetName": "ec-test-scraping-service-db-01-shard-0",
+       "metricName": "CONNECTIONS_PERCENT",
+       "created": "2022-03-10T19:56:42Z",
+       "groupId": "5d530a57a6f23921b2d7376a",
+       "typeName": "HOST_METRIC",
+       "hostnameAndPort": "ec-test-scraping-service-db-01-shard-00-01-s6tvx.mongodb.net:27017",
+       "humanReadable": "Project: EC Test Mongo Clusters\n",
+       "alertConfigId": "6220f2d85f02703e12170d56",
+       "clusterName": "ec-test-scraping-service-db-01",
+       "userAlias": "ec-test-scraping-servic-shard-00-01.s6tvx.mongodb.net",
+       "eventTypeName": "OUTSIDE_METRIC_THRESHOLD",
+       "links": [["Object"]],
+       "id": "622a57fa654a7276c657efa3",
+       "updated": "2022-03-10T19:56:42Z",
+       "currentValue": {
+         "number": 10.333333333333334,
+         "units": "RAW"
+       },
+       "status": "OPEN"
+     }
+   }
+ ]
+ 
