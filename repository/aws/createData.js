@@ -13,11 +13,12 @@ console.log("Importing alerts into DynamoDB. Please wait.");
 var allAlerts = JSON.parse(fs.readFileSync('alertData.json', 'utf8'));
 allAlerts.forEach(function(alert) {
     var params = {
-        TableName: "alertTableDev1",
+        TableName: "alertTableDev2",
         Item: {
-            "id":  alert.id,
-            "Alert": alert.alert,
-            "info":  alert.info
+            "Id":  alert.Id,
+            "Service": alert.Service,
+            "Source":  alert.Source,
+            "Info": alert.Info
         }
     };
 
@@ -25,9 +26,9 @@ allAlerts.forEach(function(alert) {
 
     docClient.put(params, function(err, data) {
        if (err) {
-           console.error("Unable to add alert", alert.id, ". Error JSON:", JSON.stringify(err, null, 2));
+           console.error("Unable to add alert", alert.Id, ". Error JSON:", JSON.stringify(err, null, 2));
        } else {
-           console.log("PutItem succeeded:", alert.id);
+           console.log("PutItem succeeded:", alert.Id);
        }
     });
 });

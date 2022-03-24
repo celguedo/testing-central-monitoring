@@ -1,11 +1,11 @@
 var express = require("express");
-var axios = require("axios")
+var axios = require("axios");
 var router = express.Router();
-const { v4: uuidv4 } = require('uuid');
-const dynamoHelp = require('../repository/aws/saveData');
+const { v4: uuidv4 } = require("uuid");
+const dynamoHelp = require("../repository/aws/saveData");
 
 /* GET */
-router.get("/mongodb", function (req, res, next) {
+router.get("/MONGO_ATLAS", function (req, res, next) {
   res.send(
     JSON.stringify({
       message: "Llego a buscar datos",
@@ -13,7 +13,11 @@ router.get("/mongodb", function (req, res, next) {
         { alert: "OUTSIDE_METRIC_THRESHOLD", type: "HOST_METRIC", total: 1 },
         { alert: "OUTSIDE_METRIC_THRESHOLD", type: "HOST_METRIC", total: 1 },
         { alert: "OUTSIDE_METRIC_THRESHOLD_3", type: "HOST_METRIC", total: 1 },
-        { alert: "OUTSIDE_METRIC_THRESHOLD_2", type: "HOST_METRIC_2", total: 1 }
+        {
+          alert: "OUTSIDE_METRIC_THRESHOLD_2",
+          type: "HOST_METRIC_2",
+          total: 1,
+        },
       ],
     })
   );
@@ -27,7 +31,7 @@ router.get("/site247", function (req, res, next) {
       data: [
         { alert: "MAQUINA_POCA_MEMORIA", type: "RAM", total: 1 },
         { alert: "MAQUINA_POCA_MEMORIA", type: "RAM", total: 1 },
-        { alert: "MAQUINA_POCO_ESPACIO", type: "DISC", total: 1 }
+        { alert: "MAQUINA_POCO_ESPACIO", type: "DISC", total: 1 },
       ],
     })
   );
@@ -37,71 +41,73 @@ router.get("/site247", function (req, res, next) {
 router.post("/mongodb", async function (req, res, next) {
   const data = req.body;
   const resultado = await dynamoHelp.save({
-    id:uuidv4(),
-    alert: data.metricName,
-    info: data
-  })
+    Id: uuidv4(),
+    Info: data,
+    Service: data.replicaSetName,
+    Source: "MONGO_ATLAS",
+  });
 
-  console.log('RESULTADO DE GUARDAR EN DB, MONGOATLAS:', resultado)
+  console.log("RESULTADO DE GUARDAR EN DB, MONGOATLAS:", resultado);
   res.send("Llego al endpoint recolector FROM source");
 });
 
 /* POST */
 router.post("/site247", function (req, res, next) {
-  console.log('SITE247: Llego:', req.body)
+  console.log("SITE247: Llego:", req.body);
   res.send("Llego al endpoint recolector FROM source");
 });
 
 /* POST */
 router.post("/aws", function (req, res, next) {
-  let body = ''
-  req.on('data', (chunk) => {
-    body += chunk.toString()
-  })
-  req.on('end', () => {
-    let payload = JSON.parse(body)
-    if (payload.Type === 'SubscriptionConfirmation') {
+  let body = "";
+  req.on("data", (chunk) => {
+    body += chunk.toString();
+  });
+  req.on("end", () => {
+    let payload = JSON.parse(body);
+    if (payload.Type === "SubscriptionConfirmation") {
       const promise = new Promise((resolve, reject) => {
-        const url = payload.SubscribeURL
-        axios.post(url, {})
-        .then(function (response) {
-          console.log('AWS MANDA:', response);
-          if (response.statusCode == 200) {
-            console.log('Yess! We have accepted the confirmation from AWS')
-            return resolve()
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-          return reject()
-        });
-      })
+        const url = payload.SubscribeURL;
+        axios
+          .post(url, {})
+          .then(function (response) {
+            console.log("AWS MANDA:", response);
+            if (response.statusCode == 200) {
+              console.log("Yess! We have accepted the confirmation from AWS");
+              return resolve();
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+            return reject();
+          });
+      });
 
       promise.then(() => {
-        res.end("ok")
-      })
-    }else{
+        res.end("ok");
+      });
+    } else {
       const promise = new Promise((resolve, reject) => {
-        console.log("AWS Llego:", Subject)
-      })
+        console.log("AWS Llego:", Subject);
+      });
 
       promise.then(() => {
-        res.end("ok")
-      })
+        res.end("ok");
+      });
     }
-  })
-  res.send('fin')
+  });
+  res.send("fin");
 });
 
 /* POST */
 router.post("/metrics", function (req, res, next) {
-  console.log('METRICS: Llego:', req.body)
+  console.log("METRICS: Llego:", req.body);
   res.send("Llego al endpoint recolector FROM source");
 });
 
 /* POST */
 router.post("/apm", function (req, res, next) {
-  console.log('Elastic APM: Llego:', typeof(req.body))
+  console.log("Elastic APM: Llego:", typeof req.body);
   res.send("Llego al endpoint recolector FROM source");
 });
 
