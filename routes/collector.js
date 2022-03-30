@@ -3,25 +3,7 @@ var axios = require("axios");
 var router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const dynamoHelp = require("../repository/aws/saveData");
-
-/* GET */
-router.get("/MONGO_ATLAS", function (req, res, next) {
-  res.send(
-    JSON.stringify({
-      message: "Llego a buscar datos",
-      data: [
-        { alert: "OUTSIDE_METRIC_THRESHOLD", type: "HOST_METRIC", total: 1 },
-        { alert: "OUTSIDE_METRIC_THRESHOLD", type: "HOST_METRIC", total: 1 },
-        { alert: "OUTSIDE_METRIC_THRESHOLD_3", type: "HOST_METRIC", total: 1 },
-        {
-          alert: "OUTSIDE_METRIC_THRESHOLD_2",
-          type: "HOST_METRIC_2",
-          total: 1,
-        },
-      ],
-    })
-  );
-});
+const { formatDate } = require('../repository/aws/helper');
 
 /* GET */
 router.get("/site247", function (req, res, next) {
@@ -40,21 +22,29 @@ router.get("/site247", function (req, res, next) {
 /* POST */
 router.post("/mongodb", async function (req, res, next) {
   const data = req.body;
-  const resultado = await dynamoHelp.save({
+  console.log('Hola, date recibida:',data.created);
+  console.log('Hola, date formateada:',formatDate(data.created))
+  await dynamoHelp.save({
     Id: uuidv4(),
     Info: data,
     Service: data.replicaSetName,
     Source: "MONGO_ATLAS",
+    Date: formatDate(data.created)
   });
-
-  console.log("RESULTADO DE GUARDAR EN DB, MONGOATLAS:", resultado);
-  res.send("Llego al endpoint recolector FROM source");
+  res.send("Llego al endpoint recolector MONGO_ATLAS");
 });
 
 /* POST */
-router.post("/site247", function (req, res, next) {
-  console.log("SITE247: Llego:", req.body);
-  res.send("Llego al endpoint recolector FROM source");
+router.post("/site247", async function (req, res, next) {
+  const data = req.body;
+  await dynamoHelp.save({
+    Id: uuidv4(),
+    Info: data,
+    Service: data.MONITORURL,
+    Source: "SITE_247",
+    Date: formatDate(data.INCIDENT_TIME_ISO)
+  });
+  res.send("Llego al endpoint recolector SITE_247");
 });
 
 /* POST */

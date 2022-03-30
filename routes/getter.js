@@ -6,12 +6,35 @@ const dynamoHelp = require("../repository/aws/getData");
 
 /* GET */
 router.get("/MONGO_ATLAS", async (req, res) => {
-  const result = await dynamoHelp.get({
-    source: "MONGO_ATLAS",
-    service: "scraping",
-  });
+  const queryParams = req.query;
+  
+  const { dataRange } = queryParams;
 
-  res.send([result.Item]);
+  const result = await dynamoHelp.get(
+    {
+      Source: "MONGO_ATLAS",
+      Date: dataRange
+    },
+    dataRange
+  );
+
+  res.send(result);
+});
+
+/* GET */
+router.get("/SITE_247", async (req, res) => {
+  const queryParams = req.query;
+  const { dataRange } = queryParams;
+
+  const result = await dynamoHelp.get(
+    {
+      Source: "SITE_247",
+      Date: dataRange
+    },
+    dataRange
+  );
+
+  res.send(result);
 });
 
 module.exports = router;

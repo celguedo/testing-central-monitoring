@@ -16,7 +16,8 @@ const save = async (alert) => {
       Id: alert.Id,
       Source: alert.Source,
       Service: alert.Service,
-      Info: alert.Info
+      Info: alert.Info,
+      Date: alert.Date
     },
   };
 

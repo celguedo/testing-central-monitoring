@@ -1,4 +1,6 @@
-var AWS = require("aws-sdk");
+const AWS = require("aws-sdk");
+const isEmpty = require("lodash/isEmpty");
+const { queryBuilder } = require("./helper");
 
 AWS.config.update({
   region: "us-east-1",
@@ -13,30 +15,24 @@ AWS.config.update({
  * @param {string} options - The URL to download from.
  * @return {Promise<string>} The data from the URL.
  */
-const get = async (options) => {
+const get = async (options, dateRange) => {
   var docClient = new AWS.DynamoDB.DocumentClient();
-  var table = "alertTableDev2";
 
-  var params = {
-    TableName: table,
-    Key: {
-      Source: options.source,
-      Service: options.service,
-    },
-  };
+  const searchParams = queryBuilder(options, dateRange);
 
-  const result = await docClient.get(params, function (err, data) {
-    if (err) {
-      console.error(
-        "Unable to read item. Error JSON:",
-        JSON.stringify(err, null, 2)
-      );
-    } else {
-      console.log("GetItem succeeded:");
-    }
-  }).promise();
+  let items = [],
+    params = {
+      TableName: "alertTableDev01",
+    };
 
-  return result;
+  if (!isEmpty(searchParams)) {
+    params = { ...params, ...searchParams };
+  }
+
+  const data = await docClient.scan(params).promise();
+  items = data.Items;
+
+  return items;
 };
 
 module.exports = {
